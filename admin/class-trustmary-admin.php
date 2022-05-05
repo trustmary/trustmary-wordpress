@@ -60,19 +60,6 @@ class Trustmary_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Trustmary_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Trustmary_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/trustmary-admin.css', array(), $this->version, 'all' );
 
 	}
@@ -83,21 +70,50 @@ class Trustmary_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Trustmary_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Trustmary_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/trustmary-admin.js', array( 'jquery' ), $this->version, false );
+	}
 
+	/**
+	 * Register settings fields
+	 */
+	public function register_admin_settings() {
+		register_setting( 'trustmary_options', 'trustmary_options');
+    add_settings_section( 'trustmary_tag_section', '', array($this, 'render_trustmary_section_text'), 'trustmary-settings' );
+    add_settings_field( 'trustmary_tag_id', 'Tag Id', array($this, 'render_trustmary_tag_id'), 'trustmary-settings', 'trustmary_tag_section' );
+    add_settings_field( 'trustmary_disable_tag', 'Disable tag', array($this, 'render_trustmary_disable_tag'), 'trustmary-settings', 'trustmary_tag_section' );
+	}
+
+	/**
+	 * Add new options page under settings: Trustmary
+	 */
+	public function register_admin_page() {
+		add_options_page('Trustmary Settings', 'Trustmary', 'manage_options', 'trustmary-settings', array($this, 'render_admin_page'));
+	}
+
+	public function render_admin_page() {
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/trustmary-admin-display.php';
+	}
+	
+	public function render_admin_section() {
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/trustmary-admin-section.php';
+	}
+	
+	public function render_admin_fields() {
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/trustmary-admin-fields.php';
+	}
+
+	public function render_trustmary_section_text() {
+		echo '<p>Get Trustmary Tag id from tag script.</p>';
+	}
+
+	public function render_trustmary_tag_id() {
+		$options = get_option( 'trustmary_options' );
+    echo "<input id='trustmary_tag_id' name='trustmary_options[trustmary_tag_id]' type='text' value='" . esc_attr( $options['trustmary_tag_id'] ) . "' />";
+	}
+	
+	public function render_trustmary_disable_tag() {
+		$options = get_option( 'trustmary_options' );
+    echo "<input id='trustmary_disable_tag' name='trustmary_options[trustmary_disable_tag]' type='checkbox' value='1' " . checked( 1 == $options['trustmary_disable_tag'], true, false ) . " />";
 	}
 
 }

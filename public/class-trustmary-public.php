@@ -22,82 +22,50 @@
  */
 class Trustmary_Public {
 
-	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
 	private $plugin_name;
-
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
 	private $version;
+	private $activate_tag;
+	private $tag_id;
 
-	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of the plugin.
-	 * @param      string    $version    The version of this plugin.
-	 */
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
-	}
-
-	/**
-	 * Register the stylesheets for the public-facing side of the site.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_styles() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Trustmary_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Trustmary_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/trustmary-public.css', array(), $this->version, 'all' );
+		$this->activate_tag = $this->test_activate_tag();
 
 	}
 
-	/**
-	 * Register the JavaScript for the public-facing side of the site.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_scripts() {
+	private function test_activate_tag() {
+		$options = get_option( 'trustmary_options' );
+		if(isset($options['trustmary_disable_tag']) && $options['trustmary_disable_tag'] === '1') {
+			return false;
+		}
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Trustmary_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Trustmary_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
+		if(isset($options['trustmary_tag_id']) && !empty($options['trustmary_tag_id'])) {
+			$this->tag_id = $options['trustmary_tag_id'];
+			return true;
+		}
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/trustmary-public.js', array( 'jquery' ), $this->version, false );
+		return false;
+	}
 
+	public function should_activate_tag() {
+		return $this->activate_tag;
+	}
+
+	public function render_trustmary_tag() {
+		echo <<<EOT
+		<script>(function (w,d,s,o,r,js,fjs) {
+			w[r]=w[r]||function() {(w[r].q = w[r].q || []).push(arguments)}
+			w[r]('app', '$this->tag_id');
+			if(d.getElementById(o)) return;
+			js = d.createElement(s), fjs = d.getElementsByTagName(s)[0];
+			js.id = o; js.src = 'https://embed.trustmary.com/embed.js';
+			js.async = 1; fjs.parentNode.insertBefore(js, fjs);
+		}(window, document, 'script', 'trustmary-embed', 'tmary'));
+	</script>
+EOT;
 	}
 
 }

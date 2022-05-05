@@ -1,16 +1,19 @@
-<?php
+<div class="wrap">
+  <h1>Trustmary Settings</h1>
+  <form action="options.php" method="post">
+      <?php
+      settings_fields( 'trustmary_options' );
+      do_settings_sections( 'trustmary-settings' );
+      submit_button( 'Save Settings' );
+      ?>
+  </form>
 
-/**
- * Provide a admin area view for the plugin
- *
- * This file is used to markup the admin-facing aspects of the plugin.
- *
- * @link       https://github.com/trustmary/trustmary-wordpress
- * @since      1.0.0
- *
- * @package    Trustmary
- * @subpackage Trustmary/admin/partials
- */
-?>
+  <h2>Shortcodes</h2>
+  <p>You can use following Trustmary shortcodes:</p>
+  <p><code>[trustmary_widget {id}]</code></p>
+  <p><code>[trustmary_embed {id}]</code></p>
+  <p><code>[trustmary_experiment {id}]</code></p>
+  <p><code>[trustmary_survey {id}]</code></p>
 
-<!-- This file should primarily consist of HTML with a little bit of PHP. -->
+  <p>Change id to correct one from <a href="https://app.trustmary.com" target="_blank">Trustmary App</a></p>
+</div>
