@@ -3,6 +3,10 @@
 class Trustmary_Shortcode {
 
   public function __construct() {
+    add_action( 'init', array( $this, 'init' ), 10, 1 );
+  }
+
+  public function init() {
     add_shortcode('trustmary_widget', array($this, 'render_trustmary_widget'));
     add_shortcode('trustmary_embed', array($this, 'render_trustmary_embed'));
     add_shortcode('trustmary_experiment', array($this, 'render_trustmary_experiment'));
